@@ -20,6 +20,7 @@ class CreateRequestsTable extends Migration
             $table->float('amount');
             $table->boolean('authorized_coordinator');
             $table->boolean('authorized_accountant');
+            $table->string('status')->default('no-autorizado');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
 

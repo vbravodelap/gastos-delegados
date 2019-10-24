@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    <h1>Solicitudes pendientes</h1>
+    <h1>Solicitudes aprobadas</h1>
 @stop
 
 @section('content')
@@ -17,7 +17,6 @@
                             <th>Id</th>
                             <th>Concepto</th>
                             <th>Descripción</th>
-                            <th>Cantidad</th>
                             <th class="text-center">Coordinador</th>
                             <th class="text-center">Contador</th>
                         </tr>

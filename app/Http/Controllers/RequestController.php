@@ -14,7 +14,7 @@ class RequestController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\ResponsePython
      */
     public function index()
     {
@@ -39,35 +39,35 @@ class RequestController extends Controller
      */
     public function store(Request $request)
     {
+
         $moneyRequest = AppRequest::create([
             'concept'                   => $request->concept,
             'description'               => $request->description,
             'amount'                    => $request->amount,
-            'authorized_coordinator'    => false,
-            'authorized_accountant'     => false,
+            'authorized_coordinator'    => 'no-autorizado',
+            'authorized_accountant'     => 'no-autorizado',
+            'status'                    => 'no-autorizado',
             'user_id'                   => \Auth::user()->id     
         ]);
         
         if($moneyRequest) {
-            return redirect()->route('request.create')->with([
+            return redirect()->route('request.pendientes')->with([
                 'message_success'  => 'La solicitud se creo correctamente. Espera a que sea autorizada.'
             ]);
         }
 
-        return redirect()->route('request.create')->with([
+        return redirect()->route('request.pendientes')->with([
             'message_error'  => 'La solicitud no se creo correctamente. Intenta mas tarde.'
         ]);
     }
 
     public function accountantAuthorizeRequest($id){
         // Validar que pertenezcan a la misma región
-
         // Validar que el usuario sea un contador
 
         $request = AppRequest::find($id);
 
-        if($request) {
-            $request->authorize_accountant = true;
+        if($this->checkAccountantAuthorization($request) == 'authorized') {
             return redirect()->route('request.authorize')->with([
                 'message'  => 'La solicitud de autorizo correctamente por el contador.'
             ]);
@@ -84,8 +84,7 @@ class RequestController extends Controller
 
         $request = AppRequest::find($id);
 
-        if($request) {
-            $request->authorize_coordinator = true;
+        if($this->checkCoordinatorAuthorization($request) == 'authorized') {
             return redirect()->route('request.authorize')->with([
                 'message'  => 'La solicitud de autorizo correctamente por el coordinador.'
             ]);
@@ -94,12 +93,43 @@ class RequestController extends Controller
         return redirect()->route('request.authorize')->with([
             'message'  => 'La solicitud no se pudo autorizar, intenta mas tarde.'
         ]);
+
     }
 
-    public function pendientes(){
-        $moneyRequests = AppRequest::all();
+    public function solicitudesPendientes(){
+        $authUser = \Auth::user();
+
+        $moneyRequests = AppRequest::where('user_id', $authUser->id)
+            ->where('authorized_coordinator', 'no-autorizado')
+                ->orWhere('authorized_accountant', 'no-autorizado')
+                    ->get();
 
         return view('moneyRequest.pendientes', [
+            'moneyRequests' => $moneyRequests
+        ]);
+    }
+
+    public function solicitudesAprobadas(){
+        $authUser = \Auth::user();
+
+        $moneyRequests = AppRequest::where('user_id', $authUser->id)
+            ->where('authorized_coordinator', 'autorizado')
+                ->orWhere('authorized_accountant', 'autorizado')
+                    ->get();
+
+        return view('moneyRequest.aprobadas', [
+            'moneyRequests'  => $moneyRequests
+        ]);
+    }
+
+    public function autorizarSolicitudes(){
+        $authUser = \Auth::user();
+
+        $moneyRequests = AppRequest::where('user_id', $authUser->id)
+            ->where('status', 'no-autorizado')
+                ->get();
+
+        return view('moneyRequest.autorizar', [
             'moneyRequests' => $moneyRequests
         ]);
     }

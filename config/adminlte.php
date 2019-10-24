@@ -135,8 +135,16 @@ return [
                     'url'   => 'request/create',
                 ],
                 [
+                    'text'  => 'Autorizar solicitudes',
+                    'url'   => 'request/autorizar',
+                ],
+                [
                     'text'  => 'Solicitudes pendientes',
                     'url'   => 'request/pendientes',
+                ],
+                [
+                    'text'  => 'Solicitudes aprobadas',
+                    'url'   => 'request/aprobadas',
                 ]
             ]
         ]

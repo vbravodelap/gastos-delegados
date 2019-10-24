@@ -22,4 +22,6 @@ Route::get('/home', 'HomeController@index');
 // Solicitudes
 Route::get('request/create', 'RequestController@create')->name('request.create');
 Route::post('request/store', 'RequestController@store')->name('request.store');
-Route::get('request/pendientes', 'RequestController@pendientes')->name('request.pendientes');
+Route::get('request/pendientes', 'RequestController@solicitudesPendientes')->name('request.pendientes');
+Route::get('request/aprobadas', 'RequestController@solicitudesAprobadas')->name('request.aprobadas');
+Route::get('request/autorizar', 'RequestController@autorizarSolicitudes')->name('request.autorizar');
